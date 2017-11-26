@@ -3,5 +3,5 @@ project(akelarre)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SOURCE_FILES main.c)
-add_executable(akelarre ${SOURCE_FILES})
+set(MAIN main.c)
+add_executable(akelarre ${MAIN})
