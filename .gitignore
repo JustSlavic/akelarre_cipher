@@ -1,2 +1,11 @@
 cmake-build-debug/
 .idea/
+*.png
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.xml
+*.toc
