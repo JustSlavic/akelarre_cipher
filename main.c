@@ -5,11 +5,9 @@
 #include "akelarre.h"
 #include "keygen.h"
 
-#define input_file "message.txt"
-#define output_file "cipher"
 #define word_size 16
 
-// usage: akelarre {encrypt|decrypt} input_file key_file output_file
+// usage: akelarre {encrypt|decrypt} input_file key_file output_file [r]
 int main(int argc, char** argv) {
 
     if (argc < 5) {
