@@ -8,14 +8,18 @@
 #define input_file "message.txt"
 #define output_file "cipher"
 #define word_size 16
-#define rounds 1
 
 // usage: akelarre {encrypt|decrypt} input_file key_file output_file
 int main(int argc, char** argv) {
 
-    if (argc < 3) {
+    if (argc < 5) {
         printf("usage: akelarre {encrypt|decrypt} input_file key_file output_file\n");
         return 1;
+    }
+
+    uint32_t rounds = 1;
+    if (argc == 6) {
+        rounds = atoi(argv[5]);
     }
 
     if (strcmp(argv[1],"encrypt") == 0) {
@@ -121,8 +125,6 @@ int main(int argc, char** argv) {
                 iterate(word, r + 1, dkeys);
             }
             output_transformation(word, dkeys, rounds);
-
-            printf("%s", buffer);
 
             fwrite(buffer, sizeof(char), word_size, textFile);
         }
