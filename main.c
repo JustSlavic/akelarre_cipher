@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <memory.h>
 #include "akelarre.h"
 #include "keygen.h"
@@ -11,45 +10,35 @@
 int main(int argc, char** argv) {
 
     if (argc < 5) {
-        printf("usage: akelarre {encrypt|decrypt} input_file key_file output_file\n");
+        printf("usage: akelarre {encrypt|decrypt} input_file key_file output_file [r]\n");
         return 1;
     }
 
     uint32_t rounds = 1;
     if (argc == 6) {
-        rounds = atoi(argv[5]);
+        rounds = (uint32_t) atoi(argv[5]);
     }
 
+    // =========== read master key =========
+    uint32_t n_keys = 13*rounds + 9;
+    uint16_t* master_key = calloc(8, sizeof(uint16_t)); // 128 bit of master key
+
+    FILE* kFile = fopen(argv[3], "rb");
+    if (!kFile) {
+        printf("bad key file\n");
+        return 1;
+    }
+
+    fread(master_key, sizeof(uint16_t), 8, kFile);
+
+    fclose(kFile);
+    //======================================
+
+
     if (strcmp(argv[1],"encrypt") == 0) {
-        // ======== generate key schedule ========
-        srand(time(NULL));
-        uint32_t current_key = rand() % INT32_MAX; // gen random key
-        uint32_t n_keys = 13*rounds + 9;
+
         uint32_t* keys = calloc(n_keys, sizeof(uint32_t));
-
-        for (int i = 0; i < 4; ++i) {
-            keys[i] = get_next_key(&current_key);
-        }
-        for (int i = 0; i < rounds; ++i) {
-            for (int k = 0; k < 13; ++k) {
-                keys[4 + i*rounds + k] = get_next_key(&current_key);
-            }
-        }
-        for (int i = 0; i < 5; ++i) {
-            keys[4 + 13*rounds + i] = get_next_key(&current_key);
-        }
-
-        FILE* kFile = fopen(argv[3], "wb");
-        if (!kFile) {
-            printf("bad key file\n");
-            return 1;
-        }
-
-        fwrite(&n_keys, sizeof(uint32_t), 1, kFile);
-        fwrite(keys, sizeof(uint32_t), n_keys, kFile);
-
-        fclose(kFile);
-        // =======================================
+        gen_encrypt_keys(master_key, keys, rounds);
 
         FILE* textFile = fopen(argv[2], "rb"); //open input_file
         if (!textFile) {
@@ -78,26 +67,18 @@ int main(int argc, char** argv) {
             fwrite(buffer, sizeof(char), word_size, cipherFile);
         }
 
+        for (int i = 0; i < n_keys; ++i) {
+            printf("%X\n", keys[i]);
+        }
+
         fclose(textFile);
         fclose(cipherFile);
         free(buffer);
         free(keys);
 
     } else if (strcmp(argv[1],"decrypt") == 0) {
-        // =========== read keys and make decrypt keys =========
-        FILE* kFile = fopen(argv[3], "rb");
-
-        uint32_t n_keys = 0;
-        fread(&n_keys, sizeof(uint32_t), 1, kFile);
-
-        uint32_t* keys = calloc(n_keys, sizeof(uint32_t));
         uint32_t* dkeys = calloc(n_keys, sizeof(uint32_t));
-
-        fread(keys, sizeof(uint32_t), n_keys, kFile);
-        gen_decrypt_keys(keys, dkeys, rounds);
-
-        fclose(kFile);
-        // =====================================================
+        gen_decrypt_keys(master_key, dkeys, rounds);
 
         FILE* cipherFile = fopen(argv[2], "rb"); //open input_file
         if (!cipherFile) {
@@ -130,11 +111,10 @@ int main(int argc, char** argv) {
         fclose(textFile);
         fclose(cipherFile);
         free(buffer);
-        free(keys);
         free(dkeys);
 
     } else {
-        printf("usage: akelarre {encrypt|decrypt} input_file key_file output_file\n");
+        printf("usage: akelarre {encrypt|decrypt} input_file key_file output_file [r]\n");
         return 1;
     }
 
