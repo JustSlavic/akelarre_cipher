@@ -4,7 +4,7 @@
 #include "akelarre.h"
 #include "keygen.h"
 
-#define word_size 16
+#define WORD_SIZE 16
 
 // usage: akelarre {encrypt|decrypt} input_file key_file output_file [r]
 int main(int argc, char** argv) {
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
     uint32_t rounds = 1;
     if (argc == 6) {
-        rounds = (uint32_t) atoi(argv[5]);
+        rounds = (uint32_t) strtol(argv[5], &argv[6], 10);
     }
 
     // =========== read master key =========
@@ -51,12 +51,12 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        char* buffer = calloc(word_size, sizeof(char));
+        char* buffer = calloc(WORD_SIZE, sizeof(char));
         PWord word = (PWord) buffer;
 
         while (!feof(textFile)) {
-            memset(buffer, 0, word_size*sizeof(char));
-            fread(buffer, sizeof(char), word_size, textFile);
+            memset(buffer, 0, WORD_SIZE*sizeof(char));
+            fread(buffer, sizeof(char), WORD_SIZE, textFile);
 
             input_transformation(word, keys);
             for (unsigned r = 0; r < rounds; ++r) {
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
             }
             output_transformation(word, keys, rounds);
 
-            fwrite(buffer, sizeof(char), word_size, cipherFile);
+            fwrite(buffer, sizeof(char), WORD_SIZE, cipherFile);
         }
 
         for (int i = 0; i < n_keys; ++i) {
@@ -92,12 +92,12 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        char* buffer = calloc(word_size, sizeof(char));
+        char* buffer = calloc(WORD_SIZE, sizeof(char));
         PWord word = (PWord) buffer;
 
         while (!feof(cipherFile)) {
-            memset(buffer, 0, word_size*sizeof(char));
-            fread(buffer, sizeof(char), word_size, cipherFile);
+            memset(buffer, 0, WORD_SIZE*sizeof(char));
+            fread(buffer, sizeof(char), WORD_SIZE, cipherFile);
 
             input_transformation(word, dkeys);
             for (unsigned r = 0; r < rounds; ++r) {
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
             }
             output_transformation(word, dkeys, rounds);
 
-            fwrite(buffer, sizeof(char), word_size, textFile);
+            fwrite(buffer, sizeof(char), WORD_SIZE, textFile);
         }
 
         fclose(textFile);
