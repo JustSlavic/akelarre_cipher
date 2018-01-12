@@ -1,6 +1,7 @@
 objects = keygen.o akelarre.o main.o
-latex_garbage = report.aux report.out report.log report.xml \
-	report.toc report.blg report.bcf report.bbl
+latex_garbage = doc/report.aux doc/report.out \
+	doc/report.log doc/report.run.xml doc/report.toc \
+	doc/report.blg doc/report.bcf doc/report.bbl
 
 all : $(objects)
 	gcc $(objects) -o akelarre
@@ -15,10 +16,10 @@ main.o : main.c
 	gcc -c main.c
 
 clean :
-	rm $(objects) $(latex_garbage)
+	rm -v akelarre $(objects) $(latex_garbage)
 
-doc : report.tex biblio.bib
-	pdflatex report
-	biber report
-	pdflatex report
-	pdflatex report
+doc : doc/report.tex doc/biblio.bib
+	cd doc && pdflatex report
+	cd doc && biber report
+	cd doc && pdflatex report
+	cd doc && pdflatex report

@@ -105,7 +105,7 @@ A = \left(X, Y, K, f_k \right)
 
 \begin{figure}[h] 
 \centering
-\includegraphics[scale=.7]{fulltransform.png}
+\includegraphics[scale=.7]{img/fulltransform.png}
 \caption{Схема шифрования}
 \label{pic:2} 
 \end{figure}
@@ -131,7 +131,7 @@ A = \left(X, Y, K, f_k \right)
 Первой операцией в $i$-м раунде проводится циклический сдвиг 128-битного блока влево. Величина сдвига контролируется семью наименее значащими битами подключа $Z_1^{(i)}$. Затем получают временные числа $P_1 = X_1 \oplus X_3$ и $P_2 = X_2 \oplus X_4$, после чего они подаются на вход преобразованию, состоящему из сдвигов и сложений (Рис. \ref{pic:1}).
 
 \begin{figure}[h] 
-\includegraphics[scale=.7]{plusrotate.png}
+\includegraphics[scale=.7]{img/plusrotate.png}
 \caption{Преобразование, состоящее из сдвигов и сложений}
 \label{pic:1}
 \end{figure}
@@ -194,7 +194,7 @@ r & $Z_1^{(r)}, ..., Z_{13}^{(r)}$ & $\left(Z_1^{(2)}\right)^{-1}, Z_2^{(1)}, ..
 Поскольку алгоритм требует $13r + 9$ ключей, неразумно было бы требовать все их от пользователя. Следовательно необходимо получив некоторое начальное значение, мастер-ключ, генерировать ключевой поток.
 
 \begin{figure}[h] 
-\includegraphics[scale=.7]{keyexp.png}
+\includegraphics[scale=.7]{img/keyexp.png}
 \caption{Схема ключевого потока}
 \label{pic:3}
 \end{figure}
