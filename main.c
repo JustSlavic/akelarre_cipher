@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
     uint32_t rounds = 1;
     if (argc == 6) {
-        rounds = (uint32_t) strtol(argv[5], &argv[6], 10);
+        rounds = (uint32_t) strtol(argv[5], (argv+6), 10);
     }
 
     // =========== read master key =========

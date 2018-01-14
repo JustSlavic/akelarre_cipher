@@ -9,18 +9,14 @@
 void init(generator* g, uint16_t* mk) {
     memcpy(g->master_key, mk, 8*sizeof(uint16_t));
 
-    g->__tmp[0] = g->master_key[0]*g->master_key[0];
+    g->__tmp[0] = g->master_key[0];
 
     int i = 1, j = 1;
     while (j < 7) {
-        g->__tmp[i] = g->master_key[j]*g->master_key[j];
-        i++;
-        g->__tmp[i] = g->master_key[j]*g->master_key[j];
-        i++;
-        j++;
+        g->__tmp[i++] = g->__tmp[i++] = g->master_key[j++];
     }
 
-    g->__tmp[13] = g->master_key[7]*g->master_key[7];
+    g->__tmp[13] = g->master_key[7];
     g->counter = 7;
 }
 
@@ -30,8 +26,8 @@ void build_7keys(generator* g) {
     const uint32_t A1 = 0x735203de;
 
     for (int i = 0, j = 0; i < 7; ++i, j+=2) {
-        uint32_t tmp_l = g->__tmp[j]   + A0;
-        uint32_t tmp_r = g->__tmp[j+1] + A1;
+        uint32_t tmp_l = g->__tmp[j]*g->__tmp[j] + A0;
+        uint32_t tmp_r = g->__tmp[j+1]*g->__tmp[j+1] + A1;
 
         g->keys[i] = ((tmp_l & 0xff) << 24) |
                 ((tmp_l & 0xff000000) >> 8) |
@@ -54,9 +50,10 @@ uint32_t get_next_key(generator* g) {
 }
 
 uint32_t neg(uint32_t a){
-    uint32_t x = a & 0x7f;
-    uint32_t y = -(x % 128);
-    return (a & 0xFFFFFF80) | (y & 0x7f);
+//    uint32_t x = a & 0x7f;
+//    uint32_t y = -(x % 128);
+//    return (a & 0xFFFFFF80) | (y & 0x7f);
+    return -a;
 }
 
 void gen_decrypt_keys(uint16_t* master_key, uint32_t* d, uint32_t nrounds) {
@@ -87,15 +84,7 @@ void gen_encrypt_keys(uint16_t* master_key, uint32_t* k, uint32_t r) {
     generator g;
     init(&g, master_key);
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 13*r + 9; ++i) {
         k[i] = get_next_key(&g);
-    }
-    for (int i = 0; i < r; ++i) {
-        for (int j = 0; j < 13; ++j) {
-            k[4 + i*r + j] = get_next_key(&g);
-        }
-    }
-    for (int i = 0; i < 5; ++i) {
-        k[4 + 13*r + i] = get_next_key(&g);
     }
 }
