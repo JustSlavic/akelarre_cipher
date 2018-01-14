@@ -16,10 +16,13 @@ main.o : main.c
 	gcc -c main.c
 
 clean :
-	rm -v akelarre $(objects) $(latex_garbage)
+	rm -v akelarre $(objects)
 
 doc : doc/report.tex doc/biblio.bib
 	cd doc && pdflatex report
 	cd doc && biber report
 	cd doc && pdflatex report
 	cd doc && pdflatex report
+
+clean_doc :
+	rm -v $(latex_garbage)
