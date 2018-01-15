@@ -15,7 +15,7 @@ typedef union {
 
 void input_transformation(Word* w, const uint32_t* k);
 void iterate(Word* w, unsigned r, const uint32_t* k);
-void output_transformation(Word* w, const uint32_t* k, uint32_t rounds);
+void output_transformation(Word* w, const uint32_t* k, uint32_t r);
 
 void rotate128(Word* w, uint32_t shift);
 uint32_t rotate31l(uint32_t w, uint32_t shift);
