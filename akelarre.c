@@ -58,7 +58,7 @@ void rotate128(Word* w, uint32_t shift) {
 }
 
 
-void input_transformation(Word* w, uint32_t* k) {
+void input_transformation(Word* w, const uint32_t* k) {
     w->chunk[0] += k[0];
     w->chunk[1] ^= k[1];
     w->chunk[2] ^= k[2];
@@ -66,7 +66,7 @@ void input_transformation(Word* w, uint32_t* k) {
 }
 
 // assume r in [1..rounds]
-void iterate(Word* w, const unsigned r, uint32_t* k) {
+void iterate(Word* w, const unsigned r, const uint32_t* k) {
     // cyclic rotation of the 128 bit block
     rotate128(w, k[4 + 13*(r-1)] & 0x7f);
 
@@ -131,7 +131,7 @@ void iterate(Word* w, const unsigned r, uint32_t* k) {
     w->chunk[3] ^= p1;
 }
 
-void output_transformation(Word* w, uint32_t* k, uint32_t nrounds) {
+void output_transformation(Word* w, const uint32_t* k, uint32_t nrounds) {
     rotate128(w, k[4 + 13*nrounds] & 0x7f);
 
     w->chunk[0] += k[4 + 13*nrounds + 1];
