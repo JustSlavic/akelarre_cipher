@@ -18,11 +18,13 @@ main.o : main.c
 clean :
 	rm -v akelarre $(objects)
 
-doc : doc/report.tex doc/biblio.bib
-	cd doc && pdflatex report
-	cd doc && biber report
-	cd doc && pdflatex report
-	cd doc && pdflatex report
+doc/report.pdf : doc/report.tex doc/biblio.bib
+	cd doc/ && pdflatex report
+	cd doc/ && biber report
+	cd doc/ && pdflatex report
+	# latexmk -pdf -pdflatex="pdflatex -interactive=nonstopmode" -use-make -jobname=doc/report -cd doc/report
 
-clean_doc :
-	rm -v $(latex_garbage)
+doc : doc/report.pdf
+
+cleanup :
+	cd doc && latexmk -CA
